@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Incident Learning Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">AI-Powered Operations · Session 1 Prototype</p>
+        <h1>Incident Learning Dashboard</h1>
+      </div>
+      <div class="sample-note">Nur Fake-/Sample-Daten · Keine Produktivdaten</div>
+    </header>
+
+    <nav class="tabs" aria-label="Hauptbereiche">
+      <button class="tab is-active" data-tab="dashboard">Dashboard</button>
+      <button class="tab" data-tab="capture">Report erfassen</button>
+      <button class="tab" data-tab="incidents">Incidents</button>
+      <button class="tab" data-tab="data">JSON Save/Load</button>
+    </nav>
+
+    <main>
+      <section id="dashboard" class="view is-active" aria-labelledby="dashboard-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="dashboard-title">Übersicht</h2>
+            <p>Wiederkehrende Systeme, Ursachen und offene Präventionsmaßnahmen.</p>
+          </div>
+          <button id="reset-samples" class="secondary">Beispieldaten neu laden</button>
+        </div>
+
+        <div id="metric-grid" class="metric-grid"></div>
+
+        <div class="dashboard-grid">
+          <section class="panel">
+            <h3>Häufige Systeme</h3>
+            <div id="system-clusters" class="cluster-list"></div>
+          </section>
+          <section class="panel">
+            <h3>Ursachen-Cluster</h3>
+            <div id="cause-clusters" class="cluster-list"></div>
+          </section>
+          <section class="panel panel-wide">
+            <h3>Offene Präventionsmaßnahmen</h3>
+            <div id="open-actions" class="action-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="capture" class="view" aria-labelledby="capture-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="capture-title">Report erfassen</h2>
+            <p>Füge einen sanitizten Incident Report ein oder lade strukturiertes JSON aus Codex.</p>
+          </div>
+          <button id="load-sample-report" class="secondary">Beispielreport laden</button>
+        </div>
+
+        <div class="capture-grid">
+          <section class="panel">
+            <label for="report-text">Incident-Report-Text</label>
+            <textarea id="report-text" rows="16" placeholder="Was ist passiert?
+Betroffenes System / Service:
+Zeitpunkt:
+Wer hat ihn gemeldet / entdeckt?
+Auswirkung:
+Ursache:
+Maßnahmen:
+Prävention:
+Kommunikation:"></textarea>
+            <div class="button-row">
+              <button id="evaluate-text">Auswerten</button>
+              <button id="clear-input" class="secondary">Leeren</button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <label for="json-input">Optional: strukturiertes JSON</label>
+            <textarea id="json-input" rows="16" placeholder='{"title":"Webservice nicht erreichbar","affectedSystem":"Realtime Price Webservice","status":"open"}'></textarea>
+            <div class="button-row">
+              <button id="load-json">JSON übernehmen</button>
+            </div>
+            <p class="hint">JSON kann ein einzelner Incident oder eine Liste unter <code>incidents</code> sein.</p>
+          </section>
+        </div>
+
+        <p id="input-message" class="message" role="status"></p>
+
+        <section id="review-panel" class="panel review-panel is-hidden">
+          <div class="section-heading compact">
+            <div>
+              <h3>Review/Edit Incident</h3>
+              <p>Prüfe die Felder vor dem Speichern. Der Prototyp trifft keine finale Root-Cause-Entscheidung.</p>
+            </div>
+            <button id="save-incident">Incident speichern</button>
+          </div>
+          <form id="incident-form" class="form-grid"></form>
+        </section>
+      </section>
+
+      <section id="incidents" class="view" aria-labelledby="incidents-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="incidents-title">Incident-Liste</h2>
+            <p>Gespeicherte lokale Incidents mit einfachen Filtern.</p>
+          </div>
+        </div>
+
+        <div class="filters">
+          <label>
+            Suche
+            <input id="filter-search" type="search" placeholder="Titel, System, Ursache..." />
+          </label>
+          <label>
+            System
+            <select id="filter-system"></select>
+          </label>
+          <label>
+            Ursache
+            <select id="filter-cause"></select>
+          </label>
+          <label>
+            Status
+            <select id="filter-status">
+              <option value="">Alle</option>
+              <option value="open">Offen</option>
+              <option value="in_progress">In Arbeit</option>
+              <option value="done">Erledigt</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="incident-list" class="incident-list"></div>
+      </section>
+
+      <section id="data" class="view" aria-labelledby="data-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="data-title">JSON Save/Load</h2>
+            <p>Exportiere oder importiere den lokalen Prototyp-Stand als JSON-Datei.</p>
+          </div>
+        </div>
+
+        <section class="panel">
+          <h3>Lokalen Stand sichern und wiederherstellen</h3>
+          <p class="hint">Export enthält nur lokale Prototype-Daten. Keine Mailbox, keine Logins, keine Anhänge, keine Produktionssysteme.</p>
+          <div class="data-actions">
+            <button id="export-json">JSON exportieren</button>
+            <label class="file-button">
+              JSON importieren
+              <input id="import-json" type="file" accept="application/json,.json" />
+            </label>
+          </div>
+          <label class="restore-json-label" for="restore-json-input">
+            Optional: JSON hier einfügen und lokalen Stand wiederherstellen
+            <textarea id="restore-json-input" rows="8" placeholder='{"incidents":[{"title":"Sample Incident","affectedSystem":"API Gateway","preventionStatus":"open"}]}'></textarea>
+          </label>
+          <div class="button-row">
+            <button id="restore-json-text" class="secondary">Eingefügtes JSON importieren</button>
+            <button id="clear-restore-json" class="secondary">Importfeld leeren</button>
+          </div>
+          <p id="data-message" class="message" role="status"></p>
+          <pre id="json-preview" class="json-preview" aria-label="JSON Vorschau"></pre>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
