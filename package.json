@@ -1,0 +1,11 @@
+{
+  "name": "incident-learning-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first Session 1 prototype using fake/sample incident data only.",
+  "scripts": {
+    "test": "node test-json-logic.cjs"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
